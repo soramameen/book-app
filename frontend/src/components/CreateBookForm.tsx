@@ -5,20 +5,25 @@ import { useState } from 'react';
 const CREATE_BOOK = gql`
     mutation CreateBook($input: CreateBookInput!) {
         createBook(input: $input) {
-            id
             title
             author
             content
         }
     }
 `;
+interface CreateBookInput {
+    title: string;
+    author: string;
+    content: string;
+}
+
 
 const CreateBookForm = () => {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<CreateBookInput>();
     const [createBook, { loading, error }] = useMutation(CREATE_BOOK);
     const [successMessage, setSuccessMessage] = useState('');
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (data:CreateBookInput) => {
         try {
             const result = await createBook({
                 variables: {
@@ -99,9 +104,9 @@ const CreateBookForm = () => {
                                 message: '内容は最低10文字以上入力してください'
                             }
                         })}
-                        rows="5"
+                        rows={5}
                     />
-                    {errors.content }
+                    {errors.content? <p>{errors.content.message}</p> : null}
                 </div>
                 
                 <button type="submit" disabled={loading}>

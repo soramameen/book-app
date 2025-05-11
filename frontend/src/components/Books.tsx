@@ -16,7 +16,10 @@ interface Book {
     content: string;
 }    
 const Books = () => {
-    const { loading, error, data } = useQuery(GET_BOOKS);
+    const { loading, error, data, refetch } = useQuery(GET_BOOKS,{
+        fetchPolicy: 'cache-and-network',
+        pollInterval: 5000, // 5秒ごとにポーリング
+    });
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error.message}</p>;
 
@@ -29,6 +32,9 @@ const Books = () => {
           <p>{book.content}</p>
         </div>
       ))}
+      <button onClick={() => refetch()}>
+        更新
+      </button>
     </div>
   )
 }
